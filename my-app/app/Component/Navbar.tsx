@@ -74,8 +74,8 @@ const linkClass = (path: string) =>
     </ul>
   </div>
   <div className="navbar-end space-x-4">
-    <a className="btn rounded-2xl btn-outline btn-info"><LogIn size={15} />Login</a>
-    <a className="btn rounded-2xl btn-outline btn-info"><Plus size={15} />Sign up</a>
+    <Link href={"/login"} className="btn rounded-2xl btn-outline btn-info"><LogIn size={15} />Login</Link>
+    <Link href={"/registration"} className="btn rounded-2xl btn-outline btn-info"><Plus size={15} />Sign up</Link>
   </div>
 </div>
   )
