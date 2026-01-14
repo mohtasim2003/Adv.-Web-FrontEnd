@@ -15,7 +15,7 @@ export default function Page() {
         </div>
 
         {/* Card */}
-        <div className="card bg-base-100 w-full max-w-xl shadow-2xl">
+        <div className="card bg-base-100 w-full max-w-xl">
           <div className="card-body px-8 py-10">
             
             <fieldset className="fieldset space-y-4">
@@ -44,7 +44,7 @@ export default function Page() {
                 </a>
               </div>
 
-              <button className="btn btn-soft w-full mt-6">
+              <button className="btn btn-soft btn-accent w-full mt-6">
                 Login
               </button>
 

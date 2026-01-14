@@ -1,5 +1,15 @@
 @import "tailwindcss";
-@plugin "daisyui";
+@plugin "daisyui" ;
+
+/* Register themes */
+@plugin "daisyui/theme" {
+  name: "cupcake";
+  default: true;
+}
+
+@plugin "daisyui/theme" {
+  name: "sunset";
+}
 
 :root {
   --background: #ffffff;
