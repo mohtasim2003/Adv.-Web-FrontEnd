@@ -1,3 +1,4 @@
+import { Plane } from "lucide-react";
 import React from "react";
 
 interface Flight {
@@ -43,7 +44,7 @@ export default function FlightCard({ flight, onBook }: Props) {
         onClick={() => onBook(flight.id)}
         className="btn btn-outline btn-accent text-base-content w-full mt-6 rounded-full"
       >
-        Book Flight ✈️
+        Book Flight<Plane size={15}></Plane>
       </button>
     </div>
   );

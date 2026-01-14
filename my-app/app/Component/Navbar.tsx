@@ -1,6 +1,6 @@
 
 "use client";
-import { LogIn, Plus } from 'lucide-react'
+import { Contact, House, LayoutDashboard, LogIn, MessageCircleWarning, Plane, Plus } from 'lucide-react'
 import Link from 'next/link'
 import React from 'react'
 import Image from "next/image";
@@ -14,42 +14,42 @@ export default function Navbar() {
 const linkClass = (path: string) =>
   `relative px-2 py-1 transition-all ${
     pathname === path
-      ? "after:absolute after:left-0 after:-bottom-1 after:h-[2px] after:w-full after:bg-accent"
+      ? "after:absolute after:left-0 after:-bottom-4 after:h-[2px] after:w-full after:bg-accent"
       : ""
   }`;
 
    const links = (
-  <>
-    <li>
+  <div className='space-x-4'>
+    <li className='text-accent font-semibold btn p-0 btn-outline'>
       <Link href="/" className={linkClass("/")}>
-        Home
+        <House size={15} />Home
       </Link>
     </li>
-    <li>
+    <li className='text-accent font-semibold btn p-0 btn-outline'>
       <Link href="/about" className={linkClass("/about")}>
-        About
+        <MessageCircleWarning size={15} />About
       </Link>
     </li>
-    <li>
+    <li className='text-accent font-semibold btn p-0 btn-outline'>
       <Link href="/contact" className={linkClass("/contact")}>
-        Contact
+        <Contact size={15} />Contact
       </Link>
     </li>
-    <li>
+    <li className='text-accent font-semibold btn p-0 btn-outline'>
       <Link href="/flights" className={linkClass("/flights")}>
-        Flights
+        <Plane size={15} />Flights
       </Link>
     </li>
-    <li>
+    <li className='text-accent font-semibold btn p-0 btn-outline'>
       <Link href="/dashboard" className={linkClass("/dashboard")}>
-        Dashboard
+        <LayoutDashboard size={15} />Dashboard
       </Link>
     </li>
-  </>
+  </div>
 );
 
   return (
-  <div className="navbar bg-neutral shadow-sm">
+  <div className="navbar bg-base-300 shadow-sm">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -90,7 +90,7 @@ const linkClass = (path: string) =>
 
   {/* sun icon */}
   <svg
-    className="swap-on h-10 w-10 fill-current"
+    className="swap-on h-10 w-10 fill-current text-accent"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24">
     <path
@@ -99,7 +99,7 @@ const linkClass = (path: string) =>
 
   {/* moon icon */}
   <svg
-    className="swap-off h-10 w-10 fill-current"
+    className="swap-off h-10 w-10 fill-current text-accent"
     xmlns="http://www.w3.org/2000/svg"
     viewBox="0 0 24 24">
     <path

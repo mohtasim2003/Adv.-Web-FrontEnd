@@ -1,44 +1,42 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import FlightCard from "../Component/FlightCard";
+import api from "../hook/api";
+// import api from "../lib/api"; // your axios instance
 
-// import FlightCard from "@/components/FlightCard";
-
-const flights = [
-  {
-    id: "1",
-    flightNumber: "SP-101",
-    route: "Dhaka → London",
-    departureTime: "2026-02-01T10:00:00Z",
-    arrivalTime: "2026-02-01T14:00:00Z",
-  },
-  {
-    id: "2",
-    flightNumber: "SP-202",
-    route: "Dhaka → Dubai",
-    departureTime: "2026-02-03T08:00:00Z",
-    arrivalTime: "2026-02-03T11:30:00Z",
-  },
-  {
-    id: "3",
-    flightNumber: "SP-202",
-    route: "Dhaka → Dubai",
-    departureTime: "2026-02-03T08:00:00Z",
-    arrivalTime: "2026-02-03T11:30:00Z",
-  },
-  {
-    id: "4",
-    flightNumber: "SP-202",
-    route: "Dhaka → Dubai",
-    departureTime: "2026-02-03T08:00:00Z",
-    arrivalTime: "2026-02-03T11:30:00Z",
-  },
-];
+interface Flight {
+  id: string;
+  flightNumber: string;
+  route: string;
+  departureTime: string;
+  arrivalTime: string;
+}
 
 export default function FlightsPage() {
+  const [flights, setFlights] = useState<Flight[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    api
+      .get("/customer/getallflight")
+      .then(res => setFlights(res.data))
+      .catch(err => console.error(err))
+      .finally(() => setLoading(false));
+  }, []);
+
   const handleBook = (flightId: string) => {
-    alert(`Book flight ${flightId}`);
+    console.log("Booking flight:", flightId);
+    // later redirect to booking form
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-base-300 px-10 py-20">

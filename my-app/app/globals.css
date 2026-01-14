@@ -3,7 +3,7 @@
 
 /* Register themes */
 @plugin "daisyui/theme" {
-  name: "cupcake";
+  name: "corporate";
   default: true;
 }
 
