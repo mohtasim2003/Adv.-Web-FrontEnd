@@ -62,7 +62,7 @@ export default function Page() {
 
               <p className="text-center text-sm mt-4">
                 Don’t have an account?{" "}
-                <a href="/registration" className="link text-accent">
+                <a href="/customer/registration" className="link text-accent">
                   Register
                 </a>
               </p>

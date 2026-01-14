@@ -1,6 +1,6 @@
 import Image from "next/image";
 import banner from "../public/Banner2.png";
-import FlightsPage from "./flights/page";
+import FlightsPage from "./customer/flights/page";
 
 export default function Home() {
   return (

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import FlightCard from "../Component/FlightCard";
+import FlightCard from "../../Component/FlightCard";
 import api from "../hook/api";
 // import api from "../lib/api"; // your axios instance
 

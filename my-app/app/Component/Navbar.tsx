@@ -9,8 +9,9 @@ import logo2 from '../../public/ll.png';
 import logo3 from '../../public/tt.png';
 import logo4 from '../../public/rr.png';
 import { usePathname } from "next/navigation";
+import api from '../customer/hook/api';
 // import { useAuth } from '../auth/AuthContext';
-import api from '../hook/api';
+// import api from '../customer/hook/api';
 
 
 export default function Navbar() {
@@ -70,13 +71,13 @@ const linkClass = (path: string) =>
       </Link>
     </li>
     <li className='text-accent font-semibold btn p-0 btn-outline'>
-      <Link href="/flights" className={linkClass("/flights")}>
+      <Link href="/customer/flights" className={linkClass("/flights")}>
         <Plane size={15} />Flights
       </Link>
     </li>
     { user && (
         <li className="text-accent font-semibold btn p-0 btn-outline">
-          <Link href="/dashboard" className={linkClass("/dashboard")}>
+          <Link href="/customer/dashboard" className={linkClass("/dashboard")}>
             <LayoutDashboard size={15} />Dashboard
           </Link>
         </li>
@@ -144,10 +145,10 @@ const linkClass = (path: string) =>
 </label>
      {!user && (
           <>
-            <Link href="/login" className="btn rounded-2xl btn-outline btn-accent">
+            <Link href="/customer/login" className="btn rounded-2xl btn-outline btn-accent">
               <LogIn size={15} /> Login
             </Link>
-            <Link href="/registration" className="btn rounded-2xl btn-outline btn-accent">
+            <Link href="/customer/registration" className="btn rounded-2xl btn-outline btn-accent">
               <Plus size={15} /> Sign up
             </Link>
           </>

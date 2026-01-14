@@ -112,7 +112,7 @@ export default function Page() {
 
               <p className="text-center text-sm mt-4">
                 Already have an account?{" "}
-                <Link href="/login" className="link text-accent">
+                <Link href="/customer/login" className="link text-accent">
                   Login
                 </Link>
               </p>
