@@ -33,12 +33,13 @@ export default function Home() {
         {/* Image */}
         <div className="relative w-full h-[320px] md:h-[420px] rounded-3xl overflow-hidden shadow-xl">
           <Image
-            src={banner}
-            alt="SkyPhoenix Flight Experience"
-            fill
-            className="object-cover"
-            priority
-          />
+  src={banner}
+  alt="SkyPhoenix Flight Experience"
+  fill
+  sizes="(max-width: 768px) 100vw, 50vw"
+  className="object-cover"
+  priority
+/>
         </div>
 
       </div>
