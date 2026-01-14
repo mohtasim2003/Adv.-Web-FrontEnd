@@ -2,14 +2,49 @@
 "use client";
 import { Contact, House, LayoutDashboard, LogIn, MessageCircleWarning, Plane, Plus } from 'lucide-react'
 import Link from 'next/link'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import Image from "next/image";
-import logo from '../../public/Logo.png'
+import logo from '../../public/Logo.png';
+import logo2 from '../../public/ll.png';
+import logo3 from '../../public/tt.png';
+import logo4 from '../../public/rr.png';
 import { usePathname } from "next/navigation";
+import api from '../customer/hook/api';
+// import { useAuth } from '../auth/AuthContext';
+// import api from '../customer/hook/api';
 
 
 export default function Navbar() {
     const pathname = usePathname();
+    const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+
+  
+ useEffect(() => {
+  const checkLogin = async () => {
+    setLoading(true);
+    try {
+      const res = await api.get("/customer/me");
+      setUser(res.data);
+    } catch {
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  checkLogin();
+}, [pathname]); 
+
+
+  const logout = async () => {
+    try {
+      await api.post("/customer/logout"); // optional, if you implement logout on backend
+      setUser(null);
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
 const linkClass = (path: string) =>
   `relative px-2 py-1 transition-all ${
@@ -36,20 +71,22 @@ const linkClass = (path: string) =>
       </Link>
     </li>
     <li className='text-accent font-semibold btn p-0 btn-outline'>
-      <Link href="/flights" className={linkClass("/flights")}>
+      <Link href="/customer/flights" className={linkClass("/flights")}>
         <Plane size={15} />Flights
       </Link>
     </li>
-    <li className='text-accent font-semibold btn p-0 btn-outline'>
-      <Link href="/dashboard" className={linkClass("/dashboard")}>
-        <LayoutDashboard size={15} />Dashboard
-      </Link>
-    </li>
+    { user && (
+        <li className="text-accent font-semibold btn p-0 btn-outline">
+          <Link href="/customer/dashboard" className={linkClass("/dashboard")}>
+            <LayoutDashboard size={15} />Dashboard
+          </Link>
+        </li>
+      )}
   </div>
 );
 
   return (
-  <div className="navbar bg-base-300 shadow-sm">
+  <div className="navbar bg-base-300 shadow-xl">
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -62,9 +99,9 @@ const linkClass = (path: string) =>
         {links}
       </ul>
     </div>
-<Link href="/" className="flex items-center gap-0">
+<Link href="/" className="flex items-center gap-2">
   <Image
-    src={logo}
+    src={logo4}
     alt="SkyPhoenix Logo"
     width={64}
     height={64}
@@ -106,8 +143,25 @@ const linkClass = (path: string) =>
       d="M21.64,13a1,1,0,0,0-1.05-.14,8.05,8.05,0,0,1-3.37.73A8.15,8.15,0,0,1,9.08,5.49a8.59,8.59,0,0,1,.25-2A1,1,0,0,0,8,2.36,10.14,10.14,0,1,0,22,14.05,1,1,0,0,0,21.64,13Zm-9.5,6.69A8.14,8.14,0,0,1,7.08,5.22v.27A10.15,10.15,0,0,0,17.22,15.63a9.79,9.79,0,0,0,2.1-.22A8.11,8.11,0,0,1,12.14,19.73Z" />
   </svg>
 </label>
-    <Link href={"/login"} className="btn rounded-2xl btn-outline btn-accent"><LogIn size={15} />Login</Link>
-    <Link href={"/registration"} className="btn rounded-2xl btn-outline btn-accent"><Plus size={15} />Sign up</Link>
+     {!user && (
+          <>
+            <Link href="/customer/login" className="btn rounded-2xl btn-outline btn-accent">
+              <LogIn size={15} /> Login
+            </Link>
+            <Link href="/customer/registration" className="btn rounded-2xl btn-outline btn-accent">
+              <Plus size={15} /> Sign up
+            </Link>
+          </>
+        )}
+
+        {user && (
+          <button
+            onClick={logout}
+            className="btn rounded-2xl btn-outline btn-accent"
+          >
+            Logout
+          </button>
+        )}
   </div>
 </div>
   )
