@@ -11,6 +11,7 @@ interface Flight {
   route: string;
   departureTime: string;
   arrivalTime: string;
+  price:number;
 }
 
 export default function FlightsPage() {

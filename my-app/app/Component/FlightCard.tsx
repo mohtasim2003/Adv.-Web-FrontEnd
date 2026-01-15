@@ -7,6 +7,7 @@ interface Flight {
   route: string;
   departureTime: string;
   arrivalTime: string;
+  price:number;
 }
 
 interface Props {
@@ -38,6 +39,16 @@ export default function FlightCard({ flight, onBook }: Props) {
           {new Date(flight.arrivalTime).toLocaleString()}
         </p>
       </div>
+      {/* Price */}
+<div className="mt-4 flex items-center justify-between w-full border border-accent/30 rounded-xl px-5 py-1">
+  <span className="text-sm text-base-content/70 uppercase tracking-wide font-bold">
+    Price
+  </span>
+
+  <span className="text-2xl font-bold text-accent">
+    ${flight.price}
+  </span>
+</div>
 
       {/* Book Button */}
       <button
