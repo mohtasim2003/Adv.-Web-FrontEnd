@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../hook/api";
+import Pusher from "pusher-js";
 
 export default function Page() {
   const router = useRouter();
@@ -10,20 +11,58 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  // ✅ toast state
+  const [toastMsg, setToastMsg] = useState<string | null>(null);
+
+  // ✅ keep one pusher instance
+  const pusherRef = useRef<Pusher | null>(null);
+
+  useEffect(() => {
+    // Create pusher once
+    pusherRef.current = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
+      cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
+    });
+
+    return () => {
+      pusherRef.current?.disconnect();
+      pusherRef.current = null;
+    };
+  }, []);
+
   const handleLogin = async () => {
-    try {
-      const res = await api.post("/customer/login", { email, password });
-      if (res.data) {
-        router.push("/"); 
-      }
-    } catch (err: any) {
-      console.error(err.response?.data);
-      setError(err.response?.data?.message || "Login failed");
+  try {
+    setError("");
+
+    const res = await api.post("/customer/login", { email, password });
+
+    if (res.data) {
+      // ✅ Save message so Navbar can show toast after redirect
+      const name = res.data?.user?.name;
+      sessionStorage.setItem(
+        "loginToast",
+        `Logged in successfully${name ? `, ${name}` : ""}!`
+      );
+
+      router.push("/");
     }
-  };
+  } catch (err: any) {
+    console.error(err.response?.data);
+    setError(err.response?.data?.message || "Login failed");
+  }
+};
+
 
   return (
     <div className="hero min-h-screen bg-base-200">
+      {/* ✅ DaisyUI Toast */}
+      {toastMsg && (
+        <div className="toast toast-top toast-end z-50">
+          <div className="alert alert-success shadow-lg">
+            <span>{toastMsg}</span>
+          </div>
+        </div>
+      )}
+
       <div className="hero-content flex-col w-full max-w-xl">
         <h1 className="text-4xl font-bold text-accent">Welcome Back!</h1>
         <p className="mt-2 text-accent">Login to your account</p>
@@ -53,10 +92,7 @@ export default function Page() {
 
               {error && <p className="text-red-500">{error}</p>}
 
-              <button
-                className="btn btn-accent w-full mt-6"
-                onClick={handleLogin}
-              >
+              <button className="btn btn-accent w-full mt-6" onClick={handleLogin}>
                 Login
               </button>
 

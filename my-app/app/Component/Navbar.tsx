@@ -8,8 +8,9 @@ import logo from '../../public/Logo.png';
 import logo2 from '../../public/ll.png';
 import logo3 from '../../public/tt.png';
 import logo4 from '../../public/rr.png';
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import api from '../customer/hook/api';
+// import LoginToast from './LoginToast';
 // import { useAuth } from '../auth/AuthContext';
 // import api from '../customer/hook/api';
 
@@ -18,6 +19,10 @@ export default function Navbar() {
     const pathname = usePathname();
     const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+    const router = useRouter();
+
+    const [toastMsg, setToastMsg] = useState<string | null>(null);
+
 
   
  useEffect(() => {
@@ -36,11 +41,25 @@ export default function Navbar() {
   checkLogin();
 }, [pathname]); 
 
+useEffect(() => {
+  const msg = sessionStorage.getItem("loginToast");
+  if (msg) {
+    setToastMsg(msg);
+    sessionStorage.removeItem("loginToast");
+    setTimeout(() => setToastMsg(null), 2000); // 2 seconds
+  }
+}, [pathname]);
 
-  const logout = async () => {
+
+
+ const logout = async () => {
     try {
-      await api.post("/customer/logout"); // optional, if you implement logout on backend
+      await api.post("/customer/logout");
       setUser(null);
+
+      // ✅ choose where to go after logout
+      router.replace("/customer/login");
+      // router.refresh(); 
     } catch (err) {
       console.error(err);
     }
@@ -71,13 +90,13 @@ const linkClass = (path: string) =>
       </Link>
     </li>
     <li className='text-accent font-semibold btn p-0 btn-outline'>
-      <Link href="/customer/flights" className={linkClass("/flights")}>
+      <Link href="/customer/flights" className={linkClass("/customer/flights")}>
         <Plane size={15} />Flights
       </Link>
     </li>
     { user && (
         <li className="text-accent font-semibold btn p-0 btn-outline">
-          <Link href="/customer/dashboard" className={linkClass("/dashboard")}>
+          <Link href="/customer/dashboard" className={linkClass("/customer/dashboard")}>
             <LayoutDashboard size={15} />Dashboard
           </Link>
         </li>
@@ -87,6 +106,14 @@ const linkClass = (path: string) =>
 
   return (
   <div className="navbar bg-base-300 shadow-xl">
+     {toastMsg && (
+  <div className="toast toast-top toast-end z-50">
+    <div className="alert alert-success shadow-lg">
+      <span>{toastMsg}</span>
+    </div>
+  </div>
+)}
+
   <div className="navbar-start">
     <div className="dropdown">
       <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
