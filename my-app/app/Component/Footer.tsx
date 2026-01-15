@@ -1,3 +1,4 @@
+import { Send } from 'lucide-react'
 import React from 'react'
 
 export default function Footer() {
@@ -32,7 +33,7 @@ export default function Footer() {
           type="text"
           placeholder="username@site.com"
           className="input input-bordered join-item" />
-        <button className="btn btn-primary join-item">Subscribe</button>
+        <button className="btn btn-accent join-item">Subscribe<Send size={15} /></button>
       </div>
     </fieldset>
   </form>
