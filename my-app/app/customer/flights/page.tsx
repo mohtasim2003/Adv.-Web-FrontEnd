@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import FlightCard from "../../Component/FlightCard";
+// import BookingModal from "../../Component/BookingModal"; // ✅ add
 import api from "../hook/api";
-// import api from "../lib/api"; // your axios instance
+import BookingModal from "../Booking/BookingModal";
 
 interface Flight {
   id: string;
@@ -11,24 +12,28 @@ interface Flight {
   route: string;
   departureTime: string;
   arrivalTime: string;
-  price:number;
+  price: number;
 }
 
 export default function FlightsPage() {
   const [flights, setFlights] = useState<Flight[]>([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ modal state
+  const [open, setOpen] = useState(false);
+  const [selectedFlight, setSelectedFlight] = useState<Flight | null>(null);
+
   useEffect(() => {
     api
       .get("/customer/getallflight")
-      .then(res => setFlights(res.data))
-      .catch(err => console.error(err))
+      .then((res) => setFlights(res.data))
+      .catch((err) => console.error(err))
       .finally(() => setLoading(false));
   }, []);
 
-  const handleBook = (flightId: string) => {
-    console.log("Booking flight:", flightId);
-    // later redirect to booking form
+  const handleBook = (flight: Flight) => {
+    setSelectedFlight(flight);
+    setOpen(true);
   };
 
   if (loading) {
@@ -46,14 +51,17 @@ export default function FlightsPage() {
       </h1>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-        {flights.map(flight => (
-          <FlightCard
-            key={flight.id}
-            flight={flight}
-            onBook={handleBook}
-          />
+        {flights.map((flight) => (
+          <FlightCard key={flight.id} flight={flight} onBook={handleBook} />
         ))}
       </div>
+
+      {/* ✅ Modal */}
+      <BookingModal
+        open={open}
+        flight={selectedFlight}
+        onClose={() => setOpen(false)}
+      />
     </div>
   );
 }
