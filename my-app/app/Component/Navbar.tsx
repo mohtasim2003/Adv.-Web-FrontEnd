@@ -172,7 +172,7 @@ const linkClass = (path: string) =>
 </label>
      {!user && (
           <>
-            <Link href="/customer/login" className="btn rounded-2xl btn-outline btn-accent">
+            <Link href="/login" className="btn rounded-2xl btn-outline btn-accent">
               <LogIn size={15} /> Login
             </Link>
             <Link href="/customer/registration" className="btn rounded-2xl btn-outline btn-accent">
