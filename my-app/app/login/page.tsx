@@ -4,6 +4,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../customer/hook/api";
 import axios from "axios";
+import Navbar from "../Component/Navbar";
 
 export default function Page() {
   const router = useRouter();
@@ -11,7 +12,7 @@ export default function Page() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  // ✅ toast state
+
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
 
@@ -25,7 +26,7 @@ export default function Page() {
                 );
 
     if (res.data) {
-      // ✅ Save message so Navbar can show toast after redirect
+      
       const name = res.data?.user?.name;
       sessionStorage.setItem(
         "loginToast",
@@ -53,7 +54,8 @@ export default function Page() {
 
   return (
     <div className="hero min-h-screen bg-base-200">
-      {/* ✅ DaisyUI Toast */}
+      
+      
       {toastMsg && (
         <div className="toast toast-top toast-end z-50">
           <div className="alert alert-success shadow-lg">
@@ -66,7 +68,7 @@ export default function Page() {
         <h1 className="text-4xl font-bold text-accent">Welcome Back!</h1>
         <p className="mt-2 text-accent">Login to your account</p>
 
-        <div className="card bg-neutral w-full mt-6">
+        <div className="card bg-base-300 w-full mt-6">
           <div className="card-body px-8 py-10">
             <div className="space-y-4">
               <div>

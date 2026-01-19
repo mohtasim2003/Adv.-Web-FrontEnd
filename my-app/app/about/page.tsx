@@ -1,10 +1,13 @@
 // import { Link } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import Navbar from "../Component/Navbar";
+import Footer from "../Component/Footer";
 
 export default function AboutPage() {
   return (
     <main className="bg-base-100">
+      <Navbar></Navbar>
       {/* HERO */}
       <section className="bg-base-300 py-28">
         <div className="max-w-6xl mx-auto px-6 text-center">
@@ -127,6 +130,7 @@ export default function AboutPage() {
           </Link>
         </div>
       </section>
+      <Footer></Footer>
     </main>
   );
 }

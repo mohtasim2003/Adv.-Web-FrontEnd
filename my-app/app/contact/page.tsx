@@ -1,8 +1,11 @@
 import React from "react";
+import Navbar from "../Component/Navbar";
+import Footer from "../Component/Footer";
 
 export default function ContactPage() {
   return (
     <main className="bg-base-100">
+      <Navbar></Navbar>
       {/* HERO */}
       <section className="bg-base-300 py-28">
         <div className="max-w-6xl mx-auto px-6 text-center">
@@ -146,6 +149,7 @@ export default function ContactPage() {
           </button>
         </div>
       </section>
+      <Footer></Footer>
     </main>
   );
 }
