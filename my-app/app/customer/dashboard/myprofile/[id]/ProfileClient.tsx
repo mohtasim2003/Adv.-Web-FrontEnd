@@ -84,7 +84,7 @@ export default function ProfileClient({ id }: { id: string }) {
 
   useEffect(() => {
     load();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+   
   }, [id]);
 
   const save = async () => {
@@ -92,8 +92,8 @@ export default function ProfileClient({ id }: { id: string }) {
       setMsg("");
       await api.put("/customer/me", { phone, address });
 
-      // ✅ keep your original message (but this is NOT the toast now)
-      setMsg("Profile updated ✅");
+     
+      setMsg("Profile updated");
 
       setEditing(false);
       load();
@@ -134,8 +134,8 @@ export default function ProfileClient({ id }: { id: string }) {
   }
 
   return (
-    <div className="min-h-screen bg-base-200 p-6 lg:p-10">
-      {/* ✅ PUSHER TOAST */}
+    <div className="min-h-screen bg-transparent p-6 lg:p-10">
+     
       {toastMsg && (
         <div className="toast toast-bottom toast-end z-50">
           <div className="alert alert-info shadow-lg">
