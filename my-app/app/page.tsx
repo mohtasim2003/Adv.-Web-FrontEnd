@@ -1,10 +1,13 @@
 import Image from "next/image";
 import banner from "../public/Banner2.png";
 import FlightsPage from "./customer/flights/page";
+import Navbar from "./Component/Navbar";
+import Footer from "./Component/Footer";
 
 export default function Home() {
   return (
     <main>
+      <Navbar></Navbar>
       <section className="w-full bg-base-300 min-h-[90vh] flex items-center justify-center px-6">
       <div className="max-w-6xl w-full grid md:grid-cols-2 gap-10 items-center">
         
@@ -47,6 +50,7 @@ export default function Home() {
     <section className="w-full min-h-[90vh] p-6 bg-base-300">
       <FlightsPage></FlightsPage>
     </section>
+    <Footer></Footer>
     </main>
    
   );
