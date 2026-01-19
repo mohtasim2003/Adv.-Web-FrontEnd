@@ -52,18 +52,16 @@ useEffect(() => {
 
 
 
- const logout = async () => {
-    try {
-      await api.post("/customer/logout");
-      setUser(null);
+const logout = async () => {
+  try {
+    setUser(null);
+    await api.post("/customer/logout");
+    router.replace("/login");
+  } catch (err) {
+    console.error(err);
+  }
+};
 
-      // ✅ choose where to go after logout
-      router.replace("/customer/login");
-      // router.refresh(); 
-    } catch (err) {
-      console.error(err);
-    }
-  };
 
 const linkClass = (path: string) =>
   `relative px-2 py-1 transition-all ${
@@ -172,7 +170,7 @@ const linkClass = (path: string) =>
 </label>
      {!user && (
           <>
-            <Link href="/customer/login" className="btn rounded-2xl btn-outline btn-accent">
+            <Link href="/login" className="btn rounded-2xl btn-outline btn-accent">
               <LogIn size={15} /> Login
             </Link>
             <Link href="/customer/registration" className="btn rounded-2xl btn-outline btn-accent">

@@ -1,6 +1,45 @@
+"use client"
+
+
 import React from 'react'
+import api from '../hook/api';
+import { useRouter } from 'next/navigation';
+import { ShieldUser } from 'lucide-react';
 
 export default function page() {
+
+  const router = useRouter();
+
+  const testGetBookings = async () => {
+    try {
+      const res = await api.get("/customer/bookings");
+      console.log("API WORKING", res.data);
+      alert("API WORKING Check console");
+    } catch (err: any) {
+      console.error("API FAILED ", err.response?.data || err);
+      alert("API FAILED Check console");
+    }
+  };
+
+
+const goMyProfile = async () => {
+  try {
+    const res = await api.get("/customer/me");
+    const me = res.data;
+
+    const id = me.id || me._id;
+    router.push(`/customer/dashboard/profile/${id}`);
+  } catch (err: any) {
+    console.error("goMyProfile failed:", err?.response?.data || err);
+
+    // show message or redirect to login
+    alert(err?.response?.data?.message || "Please login again");
+    router.push("/customer/login"); // change route if yours is different
+  }
+};
+
+
+
   return (
     <div className="drawer lg:drawer-open">
   <input id="my-drawer-4" type="checkbox" className="drawer-toggle" />
@@ -14,7 +53,11 @@ export default function page() {
       <div className="px-4 text-accent">Navbar Title</div>
     </nav>
     {/* Page content here */}
-    <div className="p-4 text-accent">Page Content</div>
+    <div className="p-4 text-accent">
+      <button onClick={testGetBookings}>
+        test
+      </button>
+    </div>
   </div>
 
   <div className="drawer-side is-drawer-close:overflow-visible">
@@ -38,6 +81,11 @@ export default function page() {
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="my-1.5 inline-block size-4 text-accent"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
             <span className="is-drawer-close:hidden text-accent">Settings</span>
           </button>
+        </li>
+        <li>
+          <button onClick={goMyProfile } className="is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Profile">
+            <ShieldUser className='text-accent' size={20} /><span className="is-drawer-close:hidden text-accent">Profile</span>
+            </button>
         </li>
       </ul>
     </div>
