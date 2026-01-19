@@ -12,7 +12,7 @@ interface Flight {
 
 interface Props {
   flight: Flight;
-  onBook: (flight: Flight) => void; // ✅ change
+  onBook: (flight: Flight) => void; 
 }
 
 export default function FlightCard({ flight, onBook }: Props) {

@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html data-theme = "corporate" lang="en">
+    <html data-theme = "bumblebee" lang="en">
       <body
         className={`antialiased`}
       >
