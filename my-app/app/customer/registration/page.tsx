@@ -4,7 +4,6 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../hook/api";
-// import api from "../lib/api";
 
 export default function Page() {
   const router = useRouter();
@@ -13,37 +12,45 @@ export default function Page() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleRegister = async () => {
+    setError("");
+
     if (!name || !email || !password || !confirmPassword) {
-      alert("All fields are required");
+      setError("All fields are required");
       return;
     }
 
     if (password !== confirmPassword) {
-      alert("Passwords do not match");
+      setError("Passwords do not match");
       return;
     }
 
     try {
-      await api.post("/customer/register", {
+      const res = await api.post("/customer/register", {
         name,
         email,
         password,
       });
 
-      alert("Registration successful! Please login.");
+    
+      const newName = res.data?.user?.name || name;
+      sessionStorage.setItem(
+        "loginToast",
+        `Registration successful${newName ? `, ${newName}` : ""}! Please login.`
+      );
+
+      
       router.push("/login");
     } catch (error: any) {
-      alert(error.response?.data?.message || "Registration failed");
+      setError(error.response?.data?.message || "Registration failed");
     }
   };
 
   return (
     <div className="hero min-h-screen bg-base-100">
       <div className="hero-content flex-col w-full">
-
-        {/* Title */}
         <div className="text-center">
           <h1 className="text-4xl text-accent font-bold">Register Now!</h1>
           <p className="mt-2 text-accent font-bold">
@@ -51,12 +58,9 @@ export default function Page() {
           </p>
         </div>
 
-        {/* Wider Card */}
-        <div className="card bg-neutral w-full max-w-xl shadow-2xl">
+        <div className="card bg-base-300 w-full max-w-xl shadow-2xl">
           <div className="card-body px-8 py-10">
-
             <fieldset className="fieldset">
-
               <div>
                 <label className="label font-bold text-accent">Full Name</label>
                 <input
@@ -103,6 +107,8 @@ export default function Page() {
                 />
               </div>
 
+              {error && <p className="text-red-500 mt-2">{error}</p>}
+
               <button
                 onClick={handleRegister}
                 className="btn btn-accent w-full mt-6"
@@ -112,13 +118,11 @@ export default function Page() {
 
               <p className="text-center text-sm mt-4">
                 Already have an account?{" "}
-                <Link href="/customer/login" className="link text-accent">
+                <Link href="/login" className="link text-accent">
                   Login
                 </Link>
               </p>
-
             </fieldset>
-
           </div>
         </div>
       </div>
