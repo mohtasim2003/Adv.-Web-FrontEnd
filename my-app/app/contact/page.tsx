@@ -1,4 +1,4 @@
-import React from "react";
+
 import Navbar from "../Component/Navbar";
 import Footer from "../Component/Footer";
 
@@ -20,18 +20,16 @@ export default function ContactPage() {
 
       {/* CONTACT SECTION */}
       <section className="py-24">
-        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-start">
-          
+        <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-start justify-center">
           {/* Contact Info */}
-          <div>
-            <h2 className="text-3xl font-bold text-base-content mb-6">
+          <div className="mx-auto">
+            <h2 className="text-3xl font-bold text-base-content mb-6 text-center md:text-left">
               Get in Touch
             </h2>
-            <p className="text-base-content/70 mb-10">
+            <p className="text-base-content/70 mb-10 text-center md:text-left">
               Have questions about bookings, discounts, or flight flexibility?
               Our support team is available 24/7 to assist you.
             </p>
-
             <div className="space-y-6">
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
@@ -45,7 +43,6 @@ export default function ContactPage() {
                   </p>
                 </div>
               </div>
-
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
                   📧
@@ -57,7 +54,6 @@ export default function ContactPage() {
                   </p>
                 </div>
               </div>
-
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-full bg-accent/10 flex items-center justify-center">
                   📞
@@ -71,66 +67,7 @@ export default function ContactPage() {
               </div>
             </div>
           </div>
-
-          {/* Contact Form */}
-          <div className="card bg-base-200 shadow-lg p-8 rounded-3xl">
-            <h3 className="text-2xl font-semibold mb-6">
-              Send Us a Message
-            </h3>
-
-            <form className="space-y-6">
-              <div>
-                <label className="label">
-                  <span className="label-text">Full Name</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="John Doe"
-                  className="input input-bordered w-full"
-                />
-              </div>
-
-              <div>
-                <label className="label">
-                  <span className="label-text">Email Address</span>
-                </label>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="input input-bordered w-full"
-                />
-              </div>
-
-              <div>
-                <label className="label">
-                  <span className="label-text">Subject</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Booking inquiry"
-                  className="input input-bordered w-full"
-                />
-              </div>
-
-              <div>
-                <label className="label">
-                  <span className="label-text">Message</span>
-                </label>
-                <textarea
-                  className="textarea textarea-bordered w-full"
-                  rows={4}
-                  placeholder="How can we help you?"
-                />
-              </div>
-
-              <button
-                type="submit"
-                className="btn btn-accent rounded-2xl w-full"
-              >
-                Send Message
-              </button>
-            </form>
-          </div>
+          {/* Contact Form (remains empty or add form here) */}
         </div>
       </section>
 

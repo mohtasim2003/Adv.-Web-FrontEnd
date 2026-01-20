@@ -6,8 +6,9 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/app/admin/Component/Navbar";
+import Navbar2 from "@/app/admin/Component/Navbar";
 
-function CreateAircraft() {
+function EditAircraft() {
     const router = useRouter()
     const [model, setModel] = React.useState("");
     const [registration, setRegistration] = React.useState("");
@@ -120,7 +121,7 @@ function CreateAircraft() {
         return (
             <>
                 {/* <Head /> */}
-                <Navbar/>
+                <Navbar2/>
                 {!rendered ?
                 (
                 <div className="min-h-screen bg-base-100">
@@ -212,4 +213,4 @@ function CreateAircraft() {
     }
 }
 
-export default CreateAircraft;
+export default EditAircraft;

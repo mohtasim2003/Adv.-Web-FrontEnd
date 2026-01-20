@@ -8,6 +8,7 @@
     "start": "next start"
   },
   "dependencies": {
+    "@pusher/push-notifications-web": "^1.1.0",
     "axios": "^1.13.2",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",

@@ -1,16 +1,28 @@
-'use client'
-//import Head from '../components/header'
-//import Foot from '../components/footer'
+
+'use client';
+import * as PusherPushNotifications from "@pusher/push-notifications-web";
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import {useRouter} from 'next/navigation';
-import Navbar from '../../Component/Navbar';
-//import Head2 from '../components/header2';
+import { useRouter } from 'next/navigation';
+import Navbar2 from '../Component/Navbar';
+
 
 function Home() {
-    let router = useRouter();
+    const router = useRouter();
     const [aircraft, setAircraft] = useState<any[]>([]);
     const [authStatus, setAuthStatus] = useState<string>("");
+
+    useEffect(() => {
+        // Pusher Beams push notification setup (admin dashboard)
+        const beamsClient = new PusherPushNotifications.Client({
+            instanceId: process.env.NEXT_PUBLIC_PUSHER_BEAMS_INSTANCE_ID || '',
+        });
+        beamsClient.start()
+            .then(() => beamsClient.addDeviceInterest("admin-notifications"))
+            .then(() => console.log("Successfully registered and subscribed to admin-notifications!"))
+            .catch((e:any) => console.error("Error registering for push notifications", e));
+    }, []);
+
     useEffect(() => {
         const fetchAircraft = async () => {
             try {
@@ -30,8 +42,7 @@ function Home() {
                 } else {
                     setAuthStatus("Error fetching data");
                 }
-                if(authStatus !== "Authenticated as admin")
-                {
+                if (authStatus !== "Authenticated as admin") {
                     router.push('/login');
                 }
                 setAircraft([]);
@@ -42,64 +53,49 @@ function Home() {
 
     return (
         <>
-            <Navbar/>
+            <Navbar2/>
             <div>
-                <h1 className="text-4xl font-bold text-center mt-10">Welcome to the Dashboard</h1>
-                <p className="text-center mt-4">Auth status: {authStatus}</p>
-                <div className="mt-8 flex flex-col items-center">
-                    <h2 className="text-2xl font-semibold mb-2">Aircraft List</h2>
-                    {aircraft.length > 0 ? (
-                        <table className="table-auto border-collapse border border-gray-400">
-                            <thead>
-                                <tr>
-                                    <th className="border px-4 py-2">Model</th>
-                                    <th className="border px-4 py-2">Registration</th>
-                                    <th className="border px-4 py-2">Capacity</th>
-                                    <th className="border px-4 py-2">Status</th>
-                                    <th className="border px-4 py-2">Change Status</th>
-                                    <th className="border px-4 py-2">Edit</th>
-                                    <th className="border px-4 py-2">Delete</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {aircraft.map((a, idx) => (
-                                    <tr key={idx}>
-                                        <td className="border px-4 py-2">{a.model}</td>
-                                        <td className="border px-4 py-2">{a.registration}</td>
-                                        <td className="border px-4 py-2">{a.capacity}</td>
-                                        <td className="border px-4 py-2">{a.status}</td>
-                                        <td className="border px-8 py-2">
-                                            <button className="btn btn-soft btn-secondary">
-                                                Switch
-                                            </button>
-                                        </td>
-                                        <td className="border px-4 py-4">
-                                            <button className="btn btn-soft btn-primary"
-                                            onClick={() => router.push('/aircrafts/edit/' + a.id)}
-                                            >
-                                                Edit
-                                            </button>
-                                        </td>
-                                        <td className="border px-4 py-2">
-                                            <button className="btn btn-soft btn-warning">
-                                                Delete
-                                            </button>
-                                        </td>
-                                        <td className="border px-4 py-2">
-                                            
-                                            <button className="btn btn-soft btn-warning"
-                                            onClick={() => router.push('/flights/aircraft/' + a.id)}
-                                            >
-                                                See Flights
-                                            </button>
-                                        </td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    ) : (
-                        <p className="mt-4">No aircraft data available.</p>
-                    )}
+                <h1 className="text-4xl font-bold text-center mt-10">Admin Dashboard</h1>
+                <div className="mt-12 flex flex-col items-center gap-6">
+                    <table className="table-auto border-separate" style={{ borderSpacing: '0 24px' }}>
+                        <tbody>
+                            <tr>
+                                <td>
+                                    <button className="btn btn-primary px-8 py-4 text-lg font-semibold w-full" onClick={() => router.push('/admin/aircrafts/view')}>
+                                        View Aircraft
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button className="btn btn-primary px-8 py-4 text-lg font-semibold w-full" onClick={() => router.push('/admin/aircrafts')}>
+                                        Modify Aircraft
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button className="btn btn-primary px-8 py-4 text-lg font-semibold w-full" onClick={() => router.push('/admin/flights')}>
+                                        Flights
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button className="btn btn-primary px-8 py-4 text-lg font-semibold w-full" onClick={() => router.push('/admin/employees')}>
+                                        Employees
+                                    </button>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <button className="btn btn-warning px-8 py-4 text-lg font-semibold w-full" onClick={() => router.push('/login')}>
+                                        Logout
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </>

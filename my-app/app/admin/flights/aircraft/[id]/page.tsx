@@ -6,6 +6,7 @@ import React, { useEffect } from "react";
 import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import Navbar from "@/app/admin/Component/Navbar";
+import Navbar2 from "@/app/admin/Component/Navbar";
 
 function SeeFlights() {
     /*
@@ -141,16 +142,16 @@ function SeeFlights() {
         return (
             <>
                 {/*<Head />*/}
-                <Navbar/>
+                <Navbar2/>
                 {!rendered ?
                     (
-                        <div className="min-h-screen bg-[#121a20]">
-                            <h1 className="text-4xl font-bold text-center pt-10 text-slate-300">Loading...</h1>
+                        <div className="min-h-screen">
+                            <h1 className="text-4xl font-bold text-center mt-10">Loading...</h1>
                         </div>
                     ) :
                     (
-                        <div className="min-h-screen bg-[#121a20]">
-                            <h1 className="text-4xl font-bold text-center pt-10 text-slate-300">All flights</h1>
+                        <div className="min-h-screen">
+                            <h1 className="text-4xl font-bold text-center mt-10">All flights</h1>
                             <div className="mt-8 flex flex-col items-center">
                                 <table className="table-auto border-collapse border border-gray-400">
                                     <thead>
@@ -159,6 +160,10 @@ function SeeFlights() {
                                             <th className="border px-4 py-2">Departure Time</th>
                                             <th className="border px-4 py-2">Arrival Time</th>
                                             <th className="border px-4 py-2">Route</th>
+                                            <th className="border px-4 py-2">Status</th>
+                                            <th className="border px-4 py-2">Price</th>
+                                            <th className="border px-4 py-2">Edit</th>
+                                            <th className="border px-4 py-2">Delete</th>
                                         </tr>
                                     </thead>
                                     
@@ -169,29 +174,38 @@ function SeeFlights() {
                                         <td className="border px-4 py-2">{a.departureTime ? new Date(a.departureTime).toLocaleString() : ''}</td>
                                         <td className="border px-4 py-2">{a.arrivalTime ? new Date(a.arrivalTime).toLocaleString() : ''}</td>
                                         <td className="border px-4 py-2">{a.route}</td>
-                                        <td className="border px-8 py-2">
-                                            <button className="btn btn-soft btn-secondary">
-                                                Switch
-                                            </button>
-                                        </td>
+                                        <td className="border px-4 py-2">{a.status}</td>
+                                        <td className="border px-4 py-2">{a.price}</td>
                                         <td className="border px-4 py-4">
-                                            <button className="btn btn-soft btn-primary"
-                                            onClick={() => router.push('/aircrafts/edit/' + a.id)}
+                                            <button className="btn btn-accent"
+                                            onClick={() => router.push('/admin/flights/edit/' + a.id)}
                                             >
                                                 Edit
                                             </button>
                                         </td>
                                         <td className="border px-4 py-2">
-                                            <button className="btn btn-soft btn-warning">
+                                            <button className="btn btn-accent"
+                                            onClick={async () => {
+                                                try {
+                                                    await axios.delete(process.env.NEXT_PUBLIC_API_ENDPOINT + `/admin/aircraft/${id}/flight/${a.id}`,
+                                                        { withCredentials: true }
+                                                    );
+                                                    setFlights((prevFlights) =>
+                                                        prevFlights.filter((flight) => flight.id !== a.id)
+                                                    );
+                                                } catch (err) {
+                                                    console.error(err);
+                                                }
+                                            }}
+                                            >
                                                 Delete
                                             </button>
                                         </td>
                                         <td className="border px-4 py-2">
-                                            
-                                            <button className="btn btn-soft btn-warning"
-                                            onClick={() => router.push('/flights/aircraft/' + a.id)}
+                                            <button className="btn btn-accent"
+                                            onClick={() => router.push('/admin/flights/assign-crew/' + a.id)}
                                             >
-                                                See Flights
+                                                View crew
                                             </button>
                                         </td>
                                     </tr>

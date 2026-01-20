@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import {useRouter} from 'next/navigation';
 import Navbar from '../../Component/Navbar';
+import Navbar2 from '../Component/Navbar';
 //import Head2 from '../components/header2';
 
 function Home() {
@@ -42,10 +43,9 @@ function Home() {
 
     return (
         <>
-            <Navbar/>
+            <Navbar2/>
             <div>
-                <h1 className="text-4xl font-bold text-center mt-10">Welcome to the Dashboard</h1>
-                <p className="text-center mt-4">Auth status: {authStatus}</p>
+                <h1 className="text-4xl font-bold text-center mt-10">Modify aircrafts</h1>
                 <div className="mt-8 flex flex-col items-center">
                     <h2 className="text-2xl font-semibold mb-2">Aircraft List</h2>
                     {aircraft.length > 0 ? (
@@ -59,6 +59,9 @@ function Home() {
                                     <th className="border px-4 py-2">Change Status</th>
                                     <th className="border px-4 py-2">Edit</th>
                                     <th className="border px-4 py-2">Delete</th>
+                                    <th className="border px-4 py-2">See flights</th>
+                                    <th className="border px-4 py-2">Add flight</th>
+                                    
                                 </tr>
                             </thead>
                             <tbody>
@@ -126,6 +129,14 @@ function Home() {
                                             onClick={() => router.push('flights/aircraft/' + a.id)}
                                             >
                                                 See Flights
+                                            </button>
+                                        </td>
+                                        <td className="border px-4 py-2">
+                                            
+                                            <button className="btn btn-accent"
+                                            onClick={() => router.push('flights/create/' + a.id)}
+                                            >
+                                                Add Flight
                                             </button>
                                         </td>
                                     </tr>
