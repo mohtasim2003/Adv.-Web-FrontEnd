@@ -42,7 +42,7 @@ export default function Page() {
         router.push("/employee/dashboard");
         }
         else{
-        router.push("/");
+        router.push("/employee/dashboard");
         }
     }
   } catch (err: any) {

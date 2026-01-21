@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import api from "../hook/empapi";
 
@@ -45,6 +45,29 @@ export default function page() {
     };
   };
 
+
+  const getBookingTime = (b: any): number | null => {
+    const candidates = [
+      b?.createdAt,
+      b?.bookingDate,
+      b?.date,
+      b?.updatedAt,
+      b?.created_at,
+      b?.booking_date,
+    ];
+
+    for (const v of candidates) {
+      if (typeof v === "string" || v instanceof Date) {
+        const t = new Date(v).getTime();
+        if (!Number.isNaN(t)) return t;
+      }
+      if (typeof v === "number" && Number.isFinite(v)) {
+        return v < 10_000_000_000 ? v * 1000 : v;
+      }
+    }
+    return null;
+  };
+
   const load = async () => {
     setLoading(true);
     setErrorMsg("");
@@ -52,7 +75,22 @@ export default function page() {
     try {
       const res = await api.get("/employee/bookings");
       const data = Array.isArray(res.data) ? res.data : [];
-      setBookings(data.map(normalizeBooking));
+
+      const normalized = data.map(normalizeBooking);
+
+      const sorted = [...normalized].sort((a, b) => {
+        const ta = getBookingTime(a);
+        const tb = getBookingTime(b);
+
+        if (ta !== null && tb !== null) return tb - ta;
+
+        if (ta === null && tb !== null) return 1;
+        if (ta !== null && tb === null) return -1;
+
+        return 0;
+      });
+
+      setBookings(sorted);
     } catch (err: any) {
       console.error("Bookings error:", {
         status: err?.response?.status,
@@ -73,7 +111,7 @@ export default function page() {
     <div className="p-4">
       <div className="bg-base-100 p-6 rounded-2xl shadow">
         <div className="flex justify-between items-center flex-wrap gap-3">
-          <h2 className="text-2xl font-bold text-accent">Employee Bookings</h2>
+          <h2 className="text-2xl font-bold text-accent"> Bookings</h2>
 
           <button className="btn btn-outline" onClick={load}>
             Refresh
