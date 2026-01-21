@@ -8,13 +8,15 @@
     "start": "next start"
   },
   "dependencies": {
+    "@pusher/push-notifications-web": "^1.1.0",
     "axios": "^1.13.2",
     "lucide-react": "^0.562.0",
     "next": "16.1.1",
     "pusher": "^5.3.2",
     "pusher-js": "^8.4.0",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "zod": "^4.3.5"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
