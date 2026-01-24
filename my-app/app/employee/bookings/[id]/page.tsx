@@ -2,10 +2,9 @@
 
 import React, { useEffect, useMemo, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
-import api from "@/app/employee/hook/empapi";
+import axios, { AxiosError } from "axios";
 import {
   ArrowLeft,
-  ShieldUser,
   Users,
   CreditCard,
   Trash2,
@@ -14,10 +13,36 @@ import {
   RefreshCcw,
 } from "lucide-react";
 
-export default function page() {
+const empAxios = axios.create({
+  baseURL:
+    process.env.NEXT_PUBLIC_API_BASE_URL?.trim() || "http://localhost:3000",
+});
+
+empAxios.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token = localStorage.getItem("employee_token");
+    if (token) {
+      config.headers = config.headers ?? {};
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
+function getErrMsg(err: unknown, fallback = "Request failed") {
+  const e = err as AxiosError<any>;
+  return (e?.response?.data as any)?.message || e?.message || fallback;
+}
+
+function getStatus(err: unknown) {
+  const e = err as AxiosError<any>;
+  return e?.response?.status;
+}
+
+export default function Page() {
   const router = useRouter();
   const params = useParams<{ id: string }>();
-  const bookingId = useMemo(() => params.id, [params.id]);
+  const bookingId = useMemo(() => params?.id ?? "", [params?.id]);
 
   const [booking, setBooking] = useState<any>(null);
   const [passengers, setPassengers] = useState<any[]>([]);
@@ -33,22 +58,27 @@ export default function page() {
   const [method, setMethod] = useState("");
 
   const loadAll = async () => {
+    if (!bookingId) return;
+
     setLoading(true);
     setErrorMsg("");
 
     try {
-      const b = await api.get(`/employee/bookings/${bookingId}`);
+      // Booking
+      const b = await empAxios.get(`/employee/bookings/${bookingId}`);
       setBooking(b.data);
       setStatus(b.data?.status ?? "");
 
-      const p = await api.get(`/employee/bookings/${bookingId}/passengers`);
+      // Passengers
+      const p = await empAxios.get(
+        `/employee/bookings/${bookingId}/passengers`,
+      );
       setPassengers(Array.isArray(p.data) ? p.data : []);
-    } catch (err: any) {
-      console.error("Load booking failed:", err?.response?.data || err);
-      const msg = err?.response?.data?.message || "Failed to load booking";
-      setErrorMsg(msg);
+    } catch (err) {
+      console.error("Load booking failed:", err);
+      setErrorMsg(getErrMsg(err, "Failed to load booking"));
 
-      if (err?.response?.status === 401) {
+      if (getStatus(err) === 401) {
         alert("Unauthorized. Please login again.");
         router.push("/employee/login");
       }
@@ -58,7 +88,7 @@ export default function page() {
   };
 
   useEffect(() => {
-    if (bookingId) loadAll();
+    loadAll();
   }, [bookingId]);
 
   const updateStatus = async () => {
@@ -67,14 +97,14 @@ export default function page() {
       return;
     }
     try {
-      await api.patch(`/employee/bookings/${bookingId}/status`, {
+      await empAxios.patch(`/employee/bookings/${bookingId}/status`, {
         status: status.trim(),
       });
       alert("Status updated");
       await loadAll();
-    } catch (err: any) {
-      console.error("Update status failed:", err?.response?.data || err);
-      alert(err?.response?.data?.message || "Failed to update status");
+    } catch (err) {
+      console.error("Update status failed:", err);
+      alert(getErrMsg(err, "Failed to update status"));
     }
   };
 
@@ -84,29 +114,29 @@ export default function page() {
       return;
     }
     try {
-      await api.post(`/employee/bookings/${bookingId}/passengers`, [
+      await empAxios.post(`/employee/bookings/${bookingId}/passengers`, [
         { name: pName.trim(), passport: pPassport.trim() },
       ]);
       setPName("");
       setPPassport("");
       alert("Passenger added");
       await loadAll();
-    } catch (err: any) {
-      console.error("Add passenger failed:", err?.response?.data || err);
-      alert(err?.response?.data?.message || "Failed to add passenger");
+    } catch (err) {
+      console.error("Add passenger failed:", err);
+      alert(getErrMsg(err, "Failed to add passenger"));
     }
   };
 
   const deletePassenger = async (passengerId: string) => {
     try {
-      await api.delete(
+      await empAxios.delete(
         `/employee/bookings/${bookingId}/passengers/${passengerId}`,
       );
       alert("Passenger deleted");
       await loadAll();
-    } catch (err: any) {
-      console.error("Delete passenger failed:", err?.response?.data || err);
-      alert(err?.response?.data?.message || "Failed to delete passenger");
+    } catch (err) {
+      console.error("Delete passenger failed:", err);
+      alert(getErrMsg(err, "Failed to delete passenger"));
     }
   };
 
@@ -123,7 +153,7 @@ export default function page() {
     }
 
     try {
-      await api.post(`/employee/bookings/${bookingId}/payment`, {
+      await empAxios.post(`/employee/bookings/${bookingId}/payment`, {
         amount: amt,
         method: method.trim(),
       });
@@ -131,20 +161,20 @@ export default function page() {
       setMethod("");
       alert("Payment added");
       await loadAll();
-    } catch (err: any) {
-      console.error("Add payment failed:", err?.response?.data || err);
-      alert(err?.response?.data?.message || "Failed to add payment");
+    } catch (err) {
+      console.error("Add payment failed:", err);
+      alert(getErrMsg(err, "Failed to add payment"));
     }
   };
 
   const checkin = async () => {
     try {
-      await api.post(`/employee/checkin`, { bookingId });
+      await empAxios.post(`/employee/checkin`, { bookingId });
       alert("Check-in successful");
       await loadAll();
-    } catch (err: any) {
-      console.error("Check-in failed:", err?.response?.data || err);
-      alert(err?.response?.data?.message || "Check-in failed");
+    } catch (err) {
+      console.error("Check-in failed:", err);
+      alert(getErrMsg(err, "Check-in failed"));
     }
   };
 
@@ -153,12 +183,12 @@ export default function page() {
     if (!ok) return;
 
     try {
-      await api.delete(`/employee/bookings/${bookingId}`);
+      await empAxios.delete(`/employee/bookings/${bookingId}`);
       alert("Booking deleted");
       router.push("/employee/bookings");
-    } catch (err: any) {
-      console.error("Delete booking failed:", err?.response?.data || err);
-      alert(err?.response?.data?.message || "Failed to delete booking");
+    } catch (err) {
+      console.error("Delete booking failed:", err);
+      alert(getErrMsg(err, "Failed to delete booking"));
     }
   };
 
@@ -289,8 +319,6 @@ export default function page() {
                     </button>
                   </div>
                 </div>
-
-                
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
@@ -381,9 +409,7 @@ export default function page() {
                           <tr key={pid}>
                             <td>{pid}</td>
                             <td>{p.name ?? "-"}</td>
-
                             <td>{p.passport ?? "-"}</td>
-
                             <td>
                               <button
                                 className="btn btn-sm btn-error"
