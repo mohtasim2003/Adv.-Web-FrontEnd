@@ -4,6 +4,30 @@ import Link from "next/link";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "../hook/api";
+import { z } from "zod";
+
+
+const registerSchema = z
+  .object({
+    name: z.string().min(1, "Full Name is required"),
+    email: z
+      .string()
+      .min(1, "Email is required")
+      .email("Please enter a valid email"),
+   password: z
+      .string()
+      .min(6, "Password must be at least 6 characters")
+      .regex(/[A-Z]/, "Password must contain at least one uppercase letter")
+      .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character"),
+
+    confirmPassword: z.string().min(1, "Confirm Password is required"),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+type FieldErrors = Partial<Record<"name" | "email" | "password" | "confirmPassword", string>>;
 
 export default function Page() {
   const router = useRouter();
@@ -14,16 +38,28 @@ export default function Page() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
 
+ 
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
+
   const handleRegister = async () => {
     setError("");
+    setFieldErrors({});
 
-    if (!name || !email || !password || !confirmPassword) {
-      setError("All fields are required");
-      return;
-    }
+    
+    const result = registerSchema.safeParse({
+      name,
+      email,
+      password,
+      confirmPassword,
+    });
 
-    if (password !== confirmPassword) {
-      setError("Passwords do not match");
+    if (!result.success) {
+      const errs: FieldErrors = {};
+      for (const issue of result.error.issues) {
+        const key = issue.path[0] as keyof FieldErrors;
+        if (key && !errs[key]) errs[key] = issue.message;
+      }
+      setFieldErrors(errs);
       return;
     }
 
@@ -34,14 +70,12 @@ export default function Page() {
         password,
       });
 
-    
       const newName = res.data?.user?.name || name;
       sessionStorage.setItem(
         "loginToast",
         `Registration successful${newName ? `, ${newName}` : ""}! Please login.`
       );
 
-      
       router.push("/login");
     } catch (error: any) {
       setError(error.response?.data?.message || "Registration failed");
@@ -70,6 +104,9 @@ export default function Page() {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />
+                {fieldErrors.name && (
+                  <p className="text-red-500 mt-1 text-sm">{fieldErrors.name}</p>
+                )}
               </div>
 
               <div>
@@ -81,6 +118,9 @@ export default function Page() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                 />
+                {fieldErrors.email && (
+                  <p className="text-red-500 mt-1 text-sm">{fieldErrors.email}</p>
+                )}
               </div>
 
               <div>
@@ -92,6 +132,9 @@ export default function Page() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
+                {fieldErrors.password && (
+                  <p className="text-red-500 mt-1 text-sm">{fieldErrors.password}</p>
+                )}
               </div>
 
               <div>
@@ -105,6 +148,11 @@ export default function Page() {
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
                 />
+                {fieldErrors.confirmPassword && (
+                  <p className="text-red-500 mt-1 text-sm">
+                    {fieldErrors.confirmPassword}
+                  </p>
+                )}
               </div>
 
               {error && <p className="text-red-500 mt-2">{error}</p>}

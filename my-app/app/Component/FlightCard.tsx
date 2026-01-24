@@ -37,7 +37,7 @@ export default function FlightCard({ flight, onBook }: Props) {
       </div>
 
       <button
-        onClick={() => onBook(flight)} // ✅ change
+        onClick={() => onBook(flight)} 
         className="btn btn-outline btn-accent text-base-content w-full mt-6 rounded-full"
       >
         Book Flight <Plane size={15} />

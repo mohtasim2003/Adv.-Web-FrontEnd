@@ -14,6 +14,8 @@ type Booking = {
     flightNumber?: string;
     route?: string;
     departureTime?: string;
+    arrivalTime?: string;
+    price?: number;
   };
 
   passengers?: Array<{
@@ -27,14 +29,20 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const [msg, setMsg] = useState<string>("");
 
-  // ✅ modal state
+  
   const [confirmOpen, setConfirmOpen] = useState(false);
-  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
+  const [selectedBookingId, setSelectedBookingId] = useState<string | null>(
+    null
+  );
 
-  // ✅ pusher toast state
+//  detail
+  const [detailsOpen, setDetailsOpen] = useState(false);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+
+  // for pusher 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  // ✅ current user id for channel
+  
   const [userId, setUserId] = useState<string | null>(null);
 
   const pusherRef = useRef<Pusher | null>(null);
@@ -54,7 +62,7 @@ export default function Page() {
     }
   };
 
-  // ✅ load userId once (for pusher channel)
+  
   const loadMe = async () => {
     try {
       const meRes = await api.get("/customer/me");
@@ -69,7 +77,7 @@ export default function Page() {
     loadBookings();
   }, []);
 
-  // ✅ pusher listener for cancel success
+ 
   useEffect(() => {
     if (!userId) return;
 
@@ -83,11 +91,10 @@ export default function Page() {
     const channel = pusher.subscribe(channelName);
 
     const handler = (data: any) => {
-      setToastMsg(data?.message || "Updated ✅");
+      setToastMsg(data?.message || "Updated");
       setTimeout(() => setToastMsg(null), 2500);
     };
 
-    // backend should trigger this event on cancel/delete
     channel.bind("booking-cancelled", handler);
 
     return () => {
@@ -98,7 +105,7 @@ export default function Page() {
     };
   }, [userId]);
 
-  // ✅ NEW: flightId -> total passengers booked (for this user)
+  
   const flightBookedCount = useMemo(() => {
     const map: Record<string, number> = {};
 
@@ -113,7 +120,7 @@ export default function Page() {
     return map;
   }, [bookings]);
 
-  // ✅ open modal instead of confirm()
+ 
   const openCancelModal = (bookingId: string) => {
     setSelectedBookingId(bookingId);
     setConfirmOpen(true);
@@ -124,16 +131,13 @@ export default function Page() {
     setSelectedBookingId(null);
   };
 
-  // ✅ confirm cancel
+  
   const confirmCancel = async () => {
     if (!selectedBookingId) return;
 
     try {
       setMsg("");
       await api.delete(`/customer/bookings/${selectedBookingId}`);
-
-      // ✅ no alert, no confirm
-      // pusher toast will show if backend triggers it
       closeCancelModal();
       loadBookings();
     } catch (err: any) {
@@ -142,9 +146,15 @@ export default function Page() {
     }
   };
 
-  const viewDetails = (bookingId: string) => {
-    console.log("View details:", bookingId);
-    setMsg(`Details clicked for booking: ${bookingId}`);
+ 
+  const openDetailsModal = (booking: Booking) => {
+    setSelectedBooking(booking);
+    setDetailsOpen(true);
+  };
+
+  const closeDetailsModal = () => {
+    setDetailsOpen(false);
+    setSelectedBooking(null);
   };
 
   if (loading) {
@@ -155,9 +165,12 @@ export default function Page() {
     );
   }
 
+  const detailsFlight = selectedBooking?.flight;
+  const detailsPassengers = selectedBooking?.passengers || [];
+
   return (
     <div className="p-2 lg:p-4">
-      {/* ✅ Toast from pusher */}
+     {/* pusher message */}
       {toastMsg && (
         <div className="toast toast-top toast-end z-50">
           <div className="alert alert-success shadow-lg">
@@ -166,7 +179,7 @@ export default function Page() {
         </div>
       )}
 
-      {/* ✅ Confirm Modal */}
+    
       <dialog className={`modal ${confirmOpen ? "modal-open" : ""}`}>
         <div className="modal-box bg-base-200 border border-accent/20 rounded-2xl shadow-2xl">
           <h3 className="font-bold text-lg text-accent">Cancel Booking</h3>
@@ -184,6 +197,72 @@ export default function Page() {
         </div>
         <form method="dialog" className="modal-backdrop">
           <button onClick={closeCancelModal}>close</button>
+        </form>
+      </dialog>
+
+      
+      <dialog className={`modal ${detailsOpen ? "modal-open" : ""}`}>
+        <div className="modal-box bg-base-200 border border-accent/20 rounded-2xl shadow-2xl">
+          <h3 className="font-bold text-xl text-accent">Booking Details</h3>
+
+          <div className="mt-4 space-y-2 text-sm">
+            <p>
+              <span className="font-semibold">Flight:</span>{" "}
+              {detailsFlight?.flightNumber || detailsFlight?.id || "-"}
+            </p>
+
+            <p>
+              <span className="font-semibold">Route:</span>{" "}
+              {detailsFlight?.route || "-"}
+            </p>
+
+            <p>
+              <span className="font-semibold">Departure:</span>{" "}
+              {detailsFlight?.departureTime
+                ? new Date(detailsFlight.departureTime).toLocaleString()
+                : "-"}
+            </p>
+
+            <p>
+              <span className="font-semibold">Status:</span>{" "}
+              <span className="badge badge-outline badge-accent ml-2">
+                {selectedBooking?.status || "unknown"}
+              </span>
+            </p>
+
+            <p>
+              <span className="font-semibold">Booking Date:</span>{" "}
+              {selectedBooking?.bookingDate
+                ? new Date(selectedBooking.bookingDate).toLocaleString()
+                : "-"}
+            </p>
+          </div>
+
+          <div className="mt-5">
+            <h4 className="font-semibold mb-2">Passengers</h4>
+
+            {detailsPassengers.length === 0 ? (
+              <div className="text-base-content/70">No passengers found.</div>
+            ) : (
+              <div className="bg-base-100 border border-accent/10 rounded-xl p-3">
+                <ul className="list-disc pl-5 space-y-1">
+                  {detailsPassengers.map((p, i) => (
+                    <li key={p.id || i}>{p.name || "Unnamed Passenger"}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+          <div className="modal-action">
+            <button className="btn btn-outline btn-accent" onClick={closeDetailsModal}>
+              Close
+            </button>
+          </div>
+        </div>
+
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={closeDetailsModal}>close</button>
         </form>
       </dialog>
 
@@ -267,7 +346,7 @@ export default function Page() {
                         <div className="flex justify-end gap-2">
                           <button
                             className="btn btn-xs btn-outline btn-accent"
-                            onClick={() => viewDetails(b.id)}
+                            onClick={() => openDetailsModal(b)}
                           >
                             Details
                           </button>

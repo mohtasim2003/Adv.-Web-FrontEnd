@@ -22,21 +22,21 @@ export default function ProfileClient({ id }: { id: string }) {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
 
-  // keep your original msg
+  
   const [msg, setMsg] = useState("");
 
-  // ✅ NEW: toast msg only for pusher notifications
+ 
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
   const load = async () => {
     try {
       setLoading(true);
-      setMsg(""); // keep as you wrote (for normal messages)
+      setMsg(""); 
 
       const res = await api.get("/customer/me");
       const me = res.data as Profile;
 
-      // ✅ if URL has someone else's id, redirect to correct id
+      
       if (me?.id && id !== me.id) {
         router.replace(`/customer/dashboard/profile/${me.id}`);
         return;
@@ -53,12 +53,11 @@ export default function ProfileClient({ id }: { id: string }) {
     }
   };
 
-  // ✅ PUSHER LISTENER
+  
   useEffect(() => {
     if (!profile?.id) return;
 
-    // optional debugging:
-    // Pusher.logToConsole = true;
+   
 
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
       cluster: process.env.NEXT_PUBLIC_PUSHER_CLUSTER!,
@@ -68,8 +67,8 @@ export default function ProfileClient({ id }: { id: string }) {
     const channel = pusher.subscribe(channelName);
 
     const handler = (data: any) => {
-      // ✅ show toast from pusher
-      setToastMsg(data?.message || "Updated ✅");
+     
+      setToastMsg(data?.message || "Updated");
       setTimeout(() => setToastMsg(null), 2500);
     };
 
@@ -148,7 +147,6 @@ export default function ProfileClient({ id }: { id: string }) {
         <div className="flex items-start justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold text-accent">My Profile</h1>
-            <p className="text-sm text-base-content/70 mt-1">Route ID: {id}</p>
           </div>
 
           <div className="flex gap-2">
@@ -168,12 +166,6 @@ export default function ProfileClient({ id }: { id: string }) {
               </button>
             )}
 
-            <button
-              className="btn btn-sm btn-outline btn-error"
-              onClick={remove}
-            >
-              Delete
-            </button>
           </div>
         </div>
 

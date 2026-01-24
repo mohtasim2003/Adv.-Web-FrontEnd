@@ -30,13 +30,12 @@ export default function BookingModal({
   const [loading, setLoading] = useState(false);
   const [err, setErr] = useState("");
 
-  // ✅ toast from pusher
   const [toastMsg, setToastMsg] = useState<string | null>(null);
 
-  // ✅ keep pusher instance
+ 
   const pusherRef = useRef<Pusher | null>(null);
 
-  // ✅ store user id so we can subscribe like ProfileClient
+  
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -47,7 +46,7 @@ export default function BookingModal({
       setLoading(false);
       setToastMsg(null);
 
-      // ✅ get logged in user id (same idea as ProfileClient)
+      
       (async () => {
         try {
           const me = await api.get("/customer/me");
@@ -61,7 +60,7 @@ export default function BookingModal({
     }
   }, [open, flight?.id]);
 
-  // ✅ PUSHER LISTENER (like your ProfileClient)
+  
   useEffect(() => {
     if (!open) return;
     if (!userId) return;
@@ -76,16 +75,16 @@ export default function BookingModal({
     const channel = pusher.subscribe(channelName);
 
     const handler = (data: any) => {
-      setToastMsg(data?.message || "Flight Booked successfully ✅");
+      setToastMsg(data?.message || "Flight Booked successfully");
 
-      // ✅ close modal after showing toast
+  
       setTimeout(() => {
         setToastMsg(null);
         onClose();
       }, 1200);
     };
 
-    // ✅ backend must trigger this event name
+    
     channel.bind("booking-created", handler);
 
     return () => {
@@ -128,12 +127,11 @@ export default function BookingModal({
       };
 
       const res = await api.post("/customer/bookings", payload);
-      console.log("Booking success ✅", res.data);
+      console.log("Booking success", res.data);
 
-      // ❌ no alert here
-      // ✅ toast will show ONLY when pusher event arrives
+      
     } catch (e: any) {
-      console.error("Booking failed ❌", e.response?.data || e);
+      console.error("Booking failed", e.response?.data || e);
       setErr(e?.response?.data?.message || "Booking failed");
     } finally {
       setLoading(false);
@@ -142,7 +140,7 @@ export default function BookingModal({
 
   return (
     <dialog className={`modal ${open ? "modal-open" : ""}`}>
-      {/* ✅ toast (does not change your design) */}
+    
       {toastMsg && (
         <div className="toast toast-top toast-end z-50">
           <div className="alert alert-success shadow-lg">
